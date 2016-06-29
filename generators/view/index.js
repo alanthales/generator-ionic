@@ -158,7 +158,7 @@ module.exports = yeoman.generators.Base.extend({
                         process: function (content) {
                             var hook = '\/\/ Yeoman hook. States section. Do not remove this comment.';
                             var regEx = new RegExp(hook, 'g');
-                            var newContent = content.toString().replace(regEx, '\n' + processedState + hook);
+                            var newContent = content.toString().replace(regEx, '\n\n' + processedState + hook);
 
                             return newContent;
                         }
