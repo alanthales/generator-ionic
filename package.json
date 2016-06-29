@@ -1,0 +1,64 @@
+{
+  "name": "generator-ionic",
+  "version": "0.0.5",
+  "description": "Bootstraps an Ionic app using RequireJS",
+  "homepage": "https://github.com/alanthales/generator-ionic#readme",
+  "author": {
+    "name": "",
+    "email": "",
+    "url": ""
+  },
+  "files": [
+    "generators/app",
+    "generators/module",
+    "generators/view",
+    "generators/service",
+    "generators/constant",
+    "generators/factory",
+    "generators/plugin",
+    "generators/utils",
+    "generators/value",
+    "generators/widget"
+  ],
+  "main": "generators/index.js",
+  "keywords": [
+    "yeoman-generator",
+    "require",
+    "angularjs",
+    "ionic",
+    "hybrid",
+    "mobile",
+    "angular"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.21.1",
+    "chalk": "^1.0.0",
+    "yosay": "^1.0.2",
+    "cordova": "~6.0.0",
+    "bplist-parser": "~0.1.1",
+    "mkdirp": "~0.5.1",
+    "lodash": "^4.0.0",
+    "ejs": "~2.4.1"
+  },
+  "devDependencies": {
+    "yeoman-assert": "^2.0.0",
+    "eslint-config-xo-space": "^0.7.0",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-exclude-gitignore": "^1.0.0",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-mocha": "^2.0.0",
+    "gulp-plumber": "^1.0.0",
+    "gulp-nsp": "^2.1.0"
+  },
+  "eslintConfig": {
+    "extends": "xo-space",
+    "env": {
+      "mocha": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alanthales/generator-ionic.git"
+  }
+}
