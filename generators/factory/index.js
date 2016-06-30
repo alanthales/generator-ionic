@@ -1,4 +1,5 @@
 'use strict';
+
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
@@ -14,6 +15,7 @@ module.exports = yeoman.generators.Base.extend({
             required: false
         });
     },
+    
     prompting: function () {
         var done = this.async();
 
@@ -21,15 +23,15 @@ module.exports = yeoman.generators.Base.extend({
         if (!this.options.isSubCall) {
             this.log(yosay(
                 'Welcome to the solid ' + chalk.red(
-                    'generator-requionic:factory') + ' generator!'
+                    'generator-ionic:factory') + ' generator!'
             ));
         }
 
         var prompts = [];
 
-        if (!this.options.moduleType) {
-            prompts.push(interactionsHelper.promptModuleType());
-        }
+//        if (!this.options.moduleType) {
+//            prompts.push(interactionsHelper.promptModuleType());
+//        }
 
         if (!this.factoryName) {
             var prompt = {
@@ -49,17 +51,17 @@ module.exports = yeoman.generators.Base.extend({
             prompts.push(prompt);
         }
 
-        if (!this.options.author) {
-            var prompt = {
-                type: 'input',
-                name: 'author',
-                message: 'Author name: '
-            }
-        }
+//        if (!this.options.author) {
+//            var prompt = {
+//                type: 'input',
+//                name: 'author',
+//                message: 'Author name: '
+//            }
+//        }
 
         if (prompts.length) {
             this.prompt(prompts, function (answers) {
-                this.options.moduleType = this.options.moduleType || answers.moduleType;
+//                this.options.moduleType = this.options.moduleType || answers.moduleType;
 
                 this.factoryName = this.factoryName || answers.factoryName;
                 //Normalize application input name.
@@ -69,7 +71,7 @@ module.exports = yeoman.generators.Base.extend({
                 //Normalize module input name.
                 this.options.moduleName = _.kebabCase(this.options.moduleName);
 
-                this.options.author = this.options.author || answers.author;
+//                this.options.author = this.options.author || answers.author;
 
                 done();
             }.bind(this));
@@ -80,27 +82,34 @@ module.exports = yeoman.generators.Base.extend({
     writing: {
 
         preprocessModule: function () {
-            this.modulePath = 'www/js/' + this.options.moduleType + '/' + this.options.moduleName;
+            this.moduleName = (this.options.moduleName ? this.options.moduleName + '.' : '') + this.factoryName;
+            this.modulePath = 'www/app/';
+            if (this.options.moduleName) {
+                this.modulePath += this.options.moduleName + '/';
+            }
         },
 
         createFactory: function () {
-            this.log(chalk.yellow('### Creating facty ###'));
-            var destinationPath = this.modulePath + '/' + _.toLower(this.factoryName) + '.factory.js';
-            var factoryName = _.capitalize(this.factoryName) + 'Factory';
+            this.log(chalk.yellow('### Creating factory ###'));
+            var destinationPath = this.modulePath + _.toLower(this.factoryName) + '.fact.js';
+            var appName = this.determineAppname();
+            var factoryName = _.capitalize(this.options.moduleName) + _.capitalize(this.factoryName) + 'Fact';
             this.fs.copyTpl(
                 this.templatePath('_factory.js'),
-                this.destinationPath(destinationPath), {
-                    author: this.options.author,
-                    moduleName: this.options.moduleName,
-                    factoryName: factoryName,
-                    date: (new Date()).toDateString()
+                this.destinationPath(destinationPath),
+                {
+                    appName: appName,
+                    moduleName: _.toLower(this.moduleName),
+                    factoryName: factoryName
                 }
             )
         },
+        
         modifyMain: function () {
-            this.log(chalk.yellow('### Adding files to main ###'));
+            this.log(chalk.yellow('### Adding sections to main ###'));
             var self = this;
-            var destinationPath = this.modulePath + '/main.js';
+            var destinationPath = 'www/app/app.js';
+            var appName = this.determineAppname();
             this.fs.copy(
                 this.destinationPath(destinationPath),
                 this.destinationPath(destinationPath),
@@ -108,13 +117,38 @@ module.exports = yeoman.generators.Base.extend({
                     process: function (content) {
                         var hook = '\/\/ Yeoman hook. Define section. Do not remove this comment.';
                         var regEx = new RegExp(hook, 'g');
-                        var substitutionString = "'./" + _.toLower(self.factoryName) + ".factory',\n";
+                        var substitutionString = ",\n\t'" + appName + "." + _.toLower(self.moduleName) + "'";
+                        if (!self.requiresEditRoutes) {
+                            substitutionString = substitutionString + "'./" + _.toLower(moduleName) + ".routes',\n";
+                        }
+                        return content.toString().replace(regEx, substitutionString + hook);
+                    }
+                }
+            );
+        },
+        
+        modifyIndexHtml: function() {
+            this.log(chalk.yellow('### Modifying index.html ###'));
+            var destinationPath = 'www/index.html';
+            var scPath = _.toLower(this.factoryName) + '.fact.js';
+            if (this.options.moduleName) {
+                scPath = _.toLower(this.options.moduleName) + '/' + scPath;
+            }
+            this.fs.copy(
+                this.destinationPath(destinationPath),
+                this.destinationPath(destinationPath),
+                {
+                    process: function (content) {
+                        var hook = '<!-- Yeoman hook. Scripts section. Do not remove this comment. -->';
+                        var regEx = new RegExp(hook, 'g');
+                        var substitutionString = '<script src="app/' + scPath.toLowerCase().replace(/\\/g, '/') + '"></script>\n\t';
                         return content.toString().replace(regEx, substitutionString + hook);
                     }
                 }
             );
         }
     },
+    
     install: function () {
         // this.installDependencies();
     }

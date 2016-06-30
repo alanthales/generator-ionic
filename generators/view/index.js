@@ -23,7 +23,7 @@ module.exports = yeoman.generators.Base.extend({
         // Have Yeoman greet the user.
         if (!this.options.isSubCall) {
             this.log(yosay(
-                'Welcome to the solid ' + chalk.red('generator-requionic:view') +
+                'Welcome to the solid ' + chalk.red('generator-ionic:view') +
                 ' generator!'
             ));
         }
@@ -52,15 +52,15 @@ module.exports = yeoman.generators.Base.extend({
 //            prompts.push(interactionsHelper.promptModuleType());
 //        }
 
-        if (!this.options.author) {
-            var prompt = {
-                type: 'input',
-                name: 'author',
-                message: 'Author name: ',
-                store: true
-            };
-            prompts.push(prompt);
-        }
+//        if (!this.options.author) {
+//            var prompt = {
+//                type: 'input',
+//                name: 'author',
+//                message: 'Author name: ',
+//                store: true
+//            };
+//            prompts.push(prompt);
+//        }
 
         if (prompts.length) {
             this.prompt(prompts, function (answers) {
@@ -68,11 +68,11 @@ module.exports = yeoman.generators.Base.extend({
                 //Normalize view input name.
                 this.viewName = _.kebabCase(this.viewName);
                 this.options.moduleName = this.options.moduleName || answers.moduleName;
-                this.options.moduleType = this.options.moduleType || answers.moduleType;
+//                this.options.moduleType = this.options.moduleType || answers.moduleType;
                 //Normalize module input name.
                 this.options.moduleName = _.kebabCase(this.options.moduleName);
-                this.options.moduleType = _.kebabCase(this.options.moduleType);
-                this.options.author = this.options.author || answers.author;
+//                this.options.moduleType = _.kebabCase(this.options.moduleType);
+//                this.options.author = this.options.author || answers.author;
 
                 done();
             }.bind(this));
@@ -83,38 +83,41 @@ module.exports = yeoman.generators.Base.extend({
     writing: {
 
         preprocessModule: function () {
-            this.modulePath = 'www/' + this.options.moduleType + '/' + this.options.moduleName;
+            this.moduleName = (this.options.moduleName ? this.options.moduleName + '.' : '') + this.viewName;
+            this.modulePath = 'www/app/';
+            if (this.options.moduleName) {
+                this.modulePath += this.options.moduleName + '/';
+            }
         },
 
         createView: function () {
             this.log(chalk.yellow('### Creating view ###'));
-            var self = this;
-            var destinationPath = 'www/app/views/' + _.toLower(this.options.moduleName);
-            var moduleName = this.options.moduleName || this.viewName;
+            var destinationPath = this.modulePath + _.toLower(this.viewName) + '.html';
             this.fs.copyTpl(
                 this.templatePath('_view.html'),
-                this.destinationPath(destinationPath + '/' + _.toLower(this.viewName) + '.html'),
+                this.destinationPath(destinationPath),
                 {
-                    moduleName: _.capitalize(moduleName)
+                    viewName: _.capitalize(this.options.moduleName) + _.capitalize(this.viewName)
                 }
             );
         },
+        
         createController: function () {
             this.log(chalk.yellow('### Creating controller ###'));
-            var moduleName = this.options.moduleName || this.viewName;
-            var destinationPath = 'www/app/controllers/' + _.toLower(moduleName) + '.js';
-            var controllerName = _.capitalize(moduleName) + 'Ctrl';
+            var destinationPath = this.modulePath + _.toLower(this.viewName) + '.ctrl.js';
+            var appName = this.determineAppname();
+            var controllerName = _.capitalize(this.options.moduleName) + _.capitalize(this.viewName) + 'Ctrl';
             this.fs.copyTpl(
                 this.templatePath('_controller.js'),
                 this.destinationPath(destinationPath),
                 {
-                    author: this.options.author,
-                    moduleName: _.toLower(moduleName),
-                    controllerName: controllerName,
-                    date: (new Date()).toDateString()
+                    appName: _.toLower(appName),
+                    moduleName: _.toLower(this.moduleName),
+                    controllerName: controllerName
                 }
             );
         },
+        
         createRoutes: function () {
 //            if (!this.fs.exists(this.modulePath + '/' + _.toLower(
 //                        this.options.moduleName) + '.routes.js')) {
@@ -135,22 +138,21 @@ module.exports = yeoman.generators.Base.extend({
                 this.requiresEditRoutes = true;
 //            }
         },
+        
         modifyRoutes: function () {
             if (this.requiresEditRoutes) {
                 this.log(chalk.yellow('### Modifying routes ###'));
-                var self = this;
+                var destinationPath = 'www/app/app.js';
                 var stateTemplate = this.fs.read(this.templatePath('_state.js'));
-                var moduleName = this.options.moduleName || this.viewName;
-                var controllerName = _.capitalize(moduleName) + 'Ctrl';
-                var destinationPath = 'www/js/app.js';
+                var controllerName = _.capitalize(this.options.moduleName) + _.capitalize(this.viewName) + 'Ctrl';
                 var templateUrl = _.toLower(this.viewName) + '.html';
                 if (this.options.moduleName) {
                     templateUrl = _.toLower(this.options.moduleName) + '/' + templateUrl;
                 }
                 var processedState = ejs.render(stateTemplate, {
+                    moduleName: this.options.moduleName + this.viewName,
                     controllerName: controllerName,
-                    moduleName: _.toLower(moduleName),
-                    template: './app/views/' + templateUrl
+                    template: './app/' + templateUrl
                 });
                 this.fs.copy(
                     this.destinationPath(destinationPath),
@@ -159,13 +161,13 @@ module.exports = yeoman.generators.Base.extend({
                             var hook = '\/\/ Yeoman hook. States section. Do not remove this comment.';
                             var regEx = new RegExp(hook, 'g');
                             var newContent = content.toString().replace(regEx, '\n\n' + processedState + hook);
-
                             return newContent;
                         }
                     }
                 );
             }
         },
+        
         createStyles: function () {
 //            this.log(chalk.yellow('### Creating styles ###'));
 //            var self = this;
@@ -192,12 +194,12 @@ module.exports = yeoman.generators.Base.extend({
 //                }
 //            )
         },
+        
         modifyMain: function () {
-            this.log(chalk.yellow('### Adding files to main ###'));
+            this.log(chalk.yellow('### Adding sections to main ###'));
             var self = this;
-            var destinationPath = 'www/js/app.js';
+            var destinationPath = 'www/app/app.js';
             var appName = this.determineAppname();
-            var moduleName = this.options.moduleName || this.viewName;
             this.fs.copy(
                 this.destinationPath(destinationPath),
                 this.destinationPath(destinationPath),
@@ -205,7 +207,7 @@ module.exports = yeoman.generators.Base.extend({
                     process: function (content) {
                         var hook = '\/\/ Yeoman hook. Define section. Do not remove this comment.';
                         var regEx = new RegExp(hook, 'g');
-                        var substitutionString = ",\n\t'" + appName + "." + _.toLower(moduleName) + "'";
+                        var substitutionString = ",\n\t'" + appName + "." + _.toLower(self.moduleName) + "'";
                         if (!self.requiresEditRoutes) {
                             substitutionString = substitutionString + "'./" + _.toLower(moduleName) + ".routes',\n";
                         }
@@ -214,11 +216,14 @@ module.exports = yeoman.generators.Base.extend({
                 }
             );
         },
+        
         modifyIndexHtml: function() {
-            this.log(chalk.yellow('### Alter index.html ###'));
+            this.log(chalk.yellow('### Modifying index.html ###'));
             var destinationPath = 'www/index.html';
-            var moduleName = this.options.moduleName || this.viewName;
-            var scPath = 'app/controllers/' + _.toLower(moduleName) + '.js';
+            var scPath = _.toLower(this.viewName) + '.ctrl.js';
+            if (this.options.moduleName) {
+                scPath = _.toLower(this.options.moduleName) + '/' + scPath;
+            }
             this.fs.copy(
                 this.destinationPath(destinationPath),
                 this.destinationPath(destinationPath),
@@ -226,13 +231,14 @@ module.exports = yeoman.generators.Base.extend({
                     process: function (content) {
                         var hook = '<!-- Yeoman hook. Scripts section. Do not remove this comment. -->';
                         var regEx = new RegExp(hook, 'g');
-                        var substitutionString = '<script src="' + scPath.toLowerCase().replace(/\\/g, '/') + '"></script>\n\t';
+                        var substitutionString = '<script src="app/' + scPath.toLowerCase().replace(/\\/g, '/') + '"></script>\n\t';
                         return content.toString().replace(regEx, substitutionString + hook);
                     }
                 }
             );
         }
     },
+    
     install: function () {
         // this.installDependencies();
     }
