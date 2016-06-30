@@ -15,6 +15,7 @@
     "generators/service",
     "generators/constant",
     "generators/factory",
+    "generators/login",
     "generators/plugin",
     "generators/utils",
     "generators/value",
