@@ -1,6 +1,6 @@
 {
   "name": "generator-ionic",
-  "version": "0.0.5",
+  "version": "0.0.9",
   "description": "Bootstraps an Ionic app using RequireJS",
   "homepage": "https://github.com/alanthales/generator-ionic#readme",
   "author": {

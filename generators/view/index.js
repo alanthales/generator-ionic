@@ -17,6 +17,7 @@ module.exports = yeoman.generators.Base.extend({
             required: false
         });
     },
+    
     prompting: function () {
         var done = this.async();
 
@@ -142,7 +143,7 @@ module.exports = yeoman.generators.Base.extend({
         modifyRoutes: function () {
             if (this.requiresEditRoutes) {
                 this.log(chalk.yellow('### Modifying routes ###'));
-                var destinationPath = 'www/app/app.js';
+                var destinationPath = 'www/js/app.js';
                 var stateTemplate = this.fs.read(this.templatePath('_state.js'));
                 var controllerName = _.capitalize(this.options.moduleName) + _.capitalize(this.viewName) + 'Ctrl';
                 var templateUrl = _.toLower(this.viewName) + '.html';
@@ -198,7 +199,7 @@ module.exports = yeoman.generators.Base.extend({
         modifyMain: function () {
             this.log(chalk.yellow('### Adding sections to main ###'));
             var self = this;
-            var destinationPath = 'www/app/app.js';
+            var destinationPath = 'www/js/app.js';
             var appName = this.determineAppname();
             this.fs.copy(
                 this.destinationPath(destinationPath),

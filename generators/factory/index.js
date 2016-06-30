@@ -108,7 +108,7 @@ module.exports = yeoman.generators.Base.extend({
         modifyMain: function () {
             this.log(chalk.yellow('### Adding sections to main ###'));
             var self = this;
-            var destinationPath = 'www/app/app.js';
+            var destinationPath = 'www/js/app.js';
             var appName = this.determineAppname();
             this.fs.copy(
                 this.destinationPath(destinationPath),
