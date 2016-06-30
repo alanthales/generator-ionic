@@ -4,7 +4,6 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var _ = require('lodash');
-var interactionsHelper = require('../utils/interactionsHelper.js');
 
 module.exports = yeoman.generators.Base.extend({
     constructor: function () {

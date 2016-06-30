@@ -78,9 +78,11 @@ module.exports = yeoman.generators.Base.extend({
                 //Normalize view input name.
                 this.viewName = _.kebabCase(this.viewName);
                 this.options.moduleName = this.options.moduleName || answers.moduleName;
+                this.options.abstractRoute = this.options.abstractRoute || answers.abstractRoute;
 //                this.options.moduleType = this.options.moduleType || answers.moduleType;
                 //Normalize module input name.
                 this.options.moduleName = _.kebabCase(this.options.moduleName);
+                this.options.abstractRoute = _.kebabCase(this.options.abstractRoute);
 //                this.options.moduleType = _.kebabCase(this.options.moduleType);
 //                this.options.author = this.options.author || answers.author;
 
@@ -122,7 +124,7 @@ module.exports = yeoman.generators.Base.extend({
                 this.templatePath('_controller.js'),
                 this.destinationPath(destinationPath),
                 {
-                    appName: _.toLower(appName),
+                    appName: appName,
                     moduleName: _.toLower(this.moduleName),
                     controllerName: controllerName
                 }
@@ -160,13 +162,13 @@ module.exports = yeoman.generators.Base.extend({
                 if (this.options.moduleName) {
                     templateUrl = _.toLower(this.options.moduleName) + '/' + templateUrl;
                 }
-                var route = _.toLower(this.options.moduleName + this.viewName);
+                var route = this.options.moduleName + this.viewName;
                 if (this.options.abstractRoute) {
-                    route = _.toLower(this.options.abstractRoute) + '.' + route;
+                    route = this.options.abstractRoute + '.' + route;
                 }
                 var moduleName = this.options.moduleName + this.viewName;
                 var processedState = ejs.render(stateTemplate, {
-                    route: route,
+                    route: _.toLower(route),
                     url: _.toLower(moduleName),
                     moduleName: moduleName,
                     controllerName: controllerName,

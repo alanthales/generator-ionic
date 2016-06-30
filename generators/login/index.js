@@ -111,7 +111,7 @@ module.exports = yeoman.generators.Base.extend({
                 this.templatePath('_controller.js'),
                 this.destinationPath(destinationPath),
                 {
-                    appName: _.toLower(appName),
+                    appName: appName,
                     moduleName: _.toLower(this.moduleName),
                     controllerName: controllerName
                 }
