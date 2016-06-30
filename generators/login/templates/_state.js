@@ -1,4 +1,4 @@
-  .state('app.<%= moduleName %>', {
+  .state('<%= moduleName %>', {
     url: '/<%= moduleName %>',
     views: {
       'pageContent': {

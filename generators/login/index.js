@@ -104,7 +104,8 @@ module.exports = yeoman.generators.Base.extend({
         createController: function () {
             this.log(chalk.yellow('### Creating controller ###'));
             var destinationPath = this.modulePath + _.toLower(this.viewName) + '.ctrl.js';
-            var appName = this.determineAppname();
+            var appName = _.last(_.split(this.destinationRoot(), '/'));
+//            var appName = this.determineAppname();
             var controllerName = _.capitalize(this.options.moduleName) + _.capitalize(this.viewName) + 'Ctrl';
             this.fs.copyTpl(
                 this.templatePath('_controller.js'),
@@ -118,24 +119,7 @@ module.exports = yeoman.generators.Base.extend({
         },
         
         createRoutes: function () {
-//            if (!this.fs.exists(this.modulePath + '/' + _.toLower(
-//                        this.options.moduleName) + '.routes.js')) {
-//                this.log(chalk.yellow('### Creating routes ###'));
-//                var destinationPath = this.modulePath + '/' + _.toLower(this.options.moduleName) + '.routes.js';
-//                var controllerName = _.capitalize(this.viewName) + 'Ctrl';
-//                this.fs.copyTpl(
-//                    this.templatePath('_routes.js'),
-//                    this.destinationPath(destinationPath), {
-//                        author: this.options.author,
-//                        moduleName: _.toLower(this.options.moduleName),
-//                        controllerName: controllerName,
-//                        viewName: _.toLower(this.viewName),
-//                        date: (new Date()).toDateString()
-//                    }
-//                );
-//            } else {
-                this.requiresEditRoutes = true;
-//            }
+            this.requiresEditRoutes = true;
         },
         
         modifyRoutes: function () {
@@ -171,7 +155,8 @@ module.exports = yeoman.generators.Base.extend({
             this.log(chalk.yellow('### Adding sections to main ###'));
             var self = this;
             var destinationPath = 'www/js/app.js';
-            var appName = this.determineAppname();
+//            var appName = this.determineAppname();
+            var appName = _.last(_.split(this.destinationRoot(), '/'));
             this.fs.copy(
                 this.destinationPath(destinationPath),
                 this.destinationPath(destinationPath),

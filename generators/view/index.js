@@ -49,6 +49,15 @@ module.exports = yeoman.generators.Base.extend({
             prompts.push(prompt);
         }
 
+        if (!this.options.abstractRoute) {
+            var prompt = {
+                type: 'input',
+                name: 'abstractRoute',
+                message: 'Abstract Route: '
+            };
+            prompts.push(prompt);
+        }
+        
 //        if (!this.options.moduleType) {
 //            prompts.push(interactionsHelper.promptModuleType());
 //        }
@@ -106,7 +115,8 @@ module.exports = yeoman.generators.Base.extend({
         createController: function () {
             this.log(chalk.yellow('### Creating controller ###'));
             var destinationPath = this.modulePath + _.toLower(this.viewName) + '.ctrl.js';
-            var appName = this.determineAppname();
+            var appName = _.last(_.split(this.destinationRoot(), '/'));
+//            var appName = this.determineAppname();
             var controllerName = _.capitalize(this.options.moduleName) + _.capitalize(this.viewName) + 'Ctrl';
             this.fs.copyTpl(
                 this.templatePath('_controller.js'),
@@ -150,8 +160,15 @@ module.exports = yeoman.generators.Base.extend({
                 if (this.options.moduleName) {
                     templateUrl = _.toLower(this.options.moduleName) + '/' + templateUrl;
                 }
+                var route = _.toLower(this.options.moduleName + this.viewName);
+                if (this.options.abstractRoute) {
+                    route = _.toLower(this.options.abstractRoute) + '.' + route;
+                }
+                var moduleName = this.options.moduleName + this.viewName;
                 var processedState = ejs.render(stateTemplate, {
-                    moduleName: this.options.moduleName + this.viewName,
+                    route: route,
+                    url: _.toLower(moduleName),
+                    moduleName: moduleName,
                     controllerName: controllerName,
                     template: './app/' + templateUrl
                 });
@@ -200,7 +217,10 @@ module.exports = yeoman.generators.Base.extend({
             this.log(chalk.yellow('### Adding sections to main ###'));
             var self = this;
             var destinationPath = 'www/js/app.js';
-            var appName = this.determineAppname();
+//            var appName = this.determineAppname();
+            var appName = _.last(_.split(this.destinationRoot(), '/'));
+            this.log(chalk.yellow(this.destinationRoot()));
+            this.log(chalk.yellow(appName));
             this.fs.copy(
                 this.destinationPath(destinationPath),
                 this.destinationPath(destinationPath),

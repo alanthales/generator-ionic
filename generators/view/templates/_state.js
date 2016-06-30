@@ -1,5 +1,5 @@
-  .state('app.<%= moduleName %>', {
-    url: '/<%= moduleName %>',
+  .state('<%= route %>', {
+    url: '/<%= url %>',
     views: {
       'pageContent': {
         templateUrl: '<%= template %>',
