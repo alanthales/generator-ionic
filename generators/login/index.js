@@ -104,7 +104,7 @@ module.exports = yeoman.generators.Base.extend({
         createController: function () {
             this.log(chalk.yellow('### Creating controller ###'));
             var destinationPath = this.modulePath + _.toLower(this.viewName) + '.ctrl.js';
-            var appName = _.last(_.split(this.destinationRoot(), '/'));
+            var appName = _.last(_.split(this.destinationRoot(), '\\'));
 //            var appName = this.determineAppname();
             var controllerName = _.capitalize(this.options.moduleName) + _.capitalize(this.viewName) + 'Ctrl';
             this.fs.copyTpl(
@@ -156,7 +156,7 @@ module.exports = yeoman.generators.Base.extend({
             var self = this;
             var destinationPath = 'www/js/app.js';
 //            var appName = this.determineAppname();
-            var appName = _.last(_.split(this.destinationRoot(), '/'));
+            var appName = _.last(_.split(this.destinationRoot(), '\\'));
             this.fs.copy(
                 this.destinationPath(destinationPath),
                 this.destinationPath(destinationPath),

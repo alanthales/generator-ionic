@@ -92,7 +92,8 @@ module.exports = yeoman.generators.Base.extend({
         createFactory: function () {
             this.log(chalk.yellow('### Creating factory ###'));
             var destinationPath = this.modulePath + _.toLower(this.factoryName) + '.fact.js';
-            var appName = this.determineAppname();
+//            var appName = this.determineAppname();
+            var appName = _.last(_.split(this.destinationRoot(), '\\'));
             var factoryName = _.capitalize(this.options.moduleName) + _.capitalize(this.factoryName) + 'Fact';
             this.fs.copyTpl(
                 this.templatePath('_factory.js'),
@@ -109,7 +110,8 @@ module.exports = yeoman.generators.Base.extend({
             this.log(chalk.yellow('### Adding sections to main ###'));
             var self = this;
             var destinationPath = 'www/js/app.js';
-            var appName = this.determineAppname();
+//            var appName = this.determineAppname();
+            var appName = _.last(_.split(this.destinationRoot(), '\\'));
             this.fs.copy(
                 this.destinationPath(destinationPath),
                 this.destinationPath(destinationPath),
