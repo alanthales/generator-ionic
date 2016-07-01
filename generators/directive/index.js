@@ -93,14 +93,14 @@ module.exports = yeoman.generators.Base.extend({
             var destinationPath = this.modulePath + _.toLower(this.directiveName) + '.direc.js';
 //            var appName = this.determineAppname();
             var appName = _.last(_.split(this.destinationRoot(), '\\'));
-            var directiveName = _.capitalize(this.options.moduleName) + _.capitalize(this.directiveName) + 'Direc';
+//            var directiveName = _.capitalize(this.options.moduleName) + _.capitalize(this.directiveName) + 'Direc';
             this.fs.copyTpl(
                 this.templatePath('_directive.js'),
                 this.destinationPath(destinationPath),
                 {
                     appName: appName,
                     moduleName: _.toLower(this.moduleName),
-                    directiveName: directiveName
+                    directiveName: this.directiveName
                 }
             )
         },
