@@ -29,14 +29,14 @@ module.exports = yeoman.generators.Base.extend({
 
         var prompts = [];
 
-//        if (!this.viewName) {
-//            var prompt = {
-//                type: 'input',
-//                name: 'viewName',
-//                message: 'View name: '
-//            };
-//            prompts.push(prompt);
-//        }
+        if (!this.viewName) {
+            var prompt = {
+                type: 'input',
+                name: 'viewName',
+                message: 'View name: '
+            };
+            prompts.push(prompt);
+        }
 
         if (!this.options.moduleName) {
             var prompt = {
@@ -63,7 +63,7 @@ module.exports = yeoman.generators.Base.extend({
 
         if (prompts.length) {
             this.prompt(prompts, function (answers) {
-                this.viewName = 'login';
+                this.viewName = this.viewName || answers.viewName;
                 //Normalize view input name.
                 this.viewName = _.kebabCase(this.viewName);
                 this.options.moduleName = this.options.moduleName || answers.moduleName;
@@ -118,37 +118,31 @@ module.exports = yeoman.generators.Base.extend({
             );
         },
         
-        createRoutes: function () {
-            this.requiresEditRoutes = true;
-        },
-        
         modifyRoutes: function () {
-            if (this.requiresEditRoutes) {
-                this.log(chalk.yellow('### Modifying routes ###'));
-                var destinationPath = 'www/js/app.js';
-                var stateTemplate = this.fs.read(this.templatePath('_state.js'));
-                var controllerName = _.capitalize(this.options.moduleName) + _.capitalize(this.viewName) + 'Ctrl';
-                var templateUrl = _.toLower(this.viewName) + '.html';
-                if (this.options.moduleName) {
-                    templateUrl = _.toLower(this.options.moduleName) + '/' + templateUrl;
-                }
-                var processedState = ejs.render(stateTemplate, {
-                    moduleName: this.options.moduleName + this.viewName,
-                    controllerName: controllerName,
-                    template: './app/' + templateUrl
-                });
-                this.fs.copy(
-                    this.destinationPath(destinationPath),
-                    this.destinationPath(destinationPath), {
-                        process: function (content) {
-                            var hook = '\/\/ Yeoman hook. States section. Do not remove this comment.';
-                            var regEx = new RegExp(hook, 'g');
-                            var newContent = content.toString().replace(regEx, '\n\n' + processedState + hook);
-                            return newContent;
-                        }
-                    }
-                );
+            this.log(chalk.yellow('### Modifying routes ###'));
+            var destinationPath = 'www/js/app.js';
+            var stateTemplate = this.fs.read(this.templatePath('_state.js'));
+            var controllerName = _.capitalize(this.options.moduleName) + _.capitalize(this.viewName) + 'Ctrl';
+            var templateUrl = _.toLower(this.viewName) + '.html';
+            if (this.options.moduleName) {
+                templateUrl = _.toLower(this.options.moduleName) + '/' + templateUrl;
             }
+            var processedState = ejs.render(stateTemplate, {
+                moduleName: this.options.moduleName + this.viewName,
+                controllerName: controllerName,
+                template: './app/' + templateUrl
+            });
+            this.fs.copy(
+                this.destinationPath(destinationPath),
+                this.destinationPath(destinationPath), {
+                    process: function (content) {
+                        var hook = '\/\/ Yeoman hook. States section. Do not remove this comment.';
+                        var regEx = new RegExp(hook, 'g');
+                        var newContent = content.toString().replace(regEx, '\n\n' + processedState + hook);
+                        return newContent;
+                    }
+                }
+            );
         },
         
         modifyMain: function () {
@@ -165,9 +159,9 @@ module.exports = yeoman.generators.Base.extend({
                         var hook = '\/\/ Yeoman hook. Define section. Do not remove this comment.';
                         var regEx = new RegExp(hook, 'g');
                         var substitutionString = ",\n\t'" + appName + "." + _.toLower(self.moduleName) + "'";
-                        if (!self.requiresEditRoutes) {
-                            substitutionString = substitutionString + "'./" + _.toLower(moduleName) + ".routes',\n";
-                        }
+//                        if (!self.requiresEditRoutes) {
+//                            substitutionString = substitutionString + "'./" + _.toLower(moduleName) + ".routes',\n";
+//                        }
                         return content.toString().replace(regEx, substitutionString + hook);
                     }
                 }

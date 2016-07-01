@@ -119,9 +119,9 @@ module.exports = yeoman.generators.Base.extend({
                         var hook = '\/\/ Yeoman hook. Define section. Do not remove this comment.';
                         var regEx = new RegExp(hook, 'g');
                         var substitutionString = ",\n\t'" + appName + "." + _.toLower(self.moduleName) + "'";
-                        if (!self.requiresEditRoutes) {
-                            substitutionString = substitutionString + "'./" + _.toLower(moduleName) + ".routes',\n";
-                        }
+//                        if (!self.requiresEditRoutes) {
+//                            substitutionString = substitutionString + "'./" + _.toLower(self.moduleName) + ".routes',\n";
+//                        }
                         return content.toString().replace(regEx, substitutionString + hook);
                     }
                 }
